@@ -1,14 +1,19 @@
 public class Main {
     public static void main(String[] args) {
-        int port = 8080;
-        if (args.length > 0) {
-            try {
-                port = Integer.parseInt(args[0]);
-            } catch (NumberFormatException e) {
-                System.err.println("Invalid port number. Using default port 8080.");
-            }
+        ArgumentParser argParser = new ArgumentParser(args);
+
+        String mode = argParser.getServerMode();
+        String protocol = argParser.getProtocol();
+        int port = argParser.getPort();
+
+        if ("server".equalsIgnoreCase(mode) && "tcp".equalsIgnoreCase(protocol)) {
+            TCPServer server = new TCPServer(port);
+            server.launch();
+        } else if ("server".equalsIgnoreCase(mode) && "udp".equalsIgnoreCase(protocol)) {
+            UDPServer server = new UDPServer(port);
+            server.launch();
+        } else {
+            System.out.println("Invalid combination of mode and protocol. Currently supported: TCP server mode.");
         }
-        TCPMultiServer server = new TCPMultiServer(port);
-        server.launch();
     }
 }
